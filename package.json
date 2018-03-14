@@ -2,7 +2,7 @@
   "name": "whistle-hq-prototype",
   "private": true,
   "version": "1.0.0",
-  "description": "Chrome extension which saves bandwidth by compressing images on the page",
+  "description": "Whistle HQ prototype frontend",
   "author": "Whistle HQ",
   "license": "MIT",
   "scripts": {
