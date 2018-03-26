@@ -1,20 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Messages = ({comments}) => {
-    // no comments found
-    if (Object.keys(comments).length === 0) {
+const Messages = ({ data }) => {
+    // no data found
+    if (Object.keys(data).length === 0 || data.comments === false) {
         return (
             <div>No comments on for this domain</div>
         )
     } else {
-        console.log("state updates");
+        // console.log(data.data);
         return (
             <div>
-                {comments["comments"].map(function(comment, index){
+                {data.comments.map(function (comment, index) {
                     return <div key={index}>
                         <h3>{comment.user}</h3>
-                        <p>{comment.comment}</p>
+                        <h4>{comment.org}</h4>
+                        <p>{comment.message}</p>
                     </div>
                 })}
             </div>
@@ -23,7 +24,7 @@ const Messages = ({comments}) => {
 };
 
 Messages.propTypes = {
-    comments: PropTypes.object
+    data: PropTypes.object
 };
 
 export default Messages;

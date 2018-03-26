@@ -20,8 +20,8 @@
   "permissions": [
     "storage",
     "webRequest",
-    "webRequestBlocking",
     "tabs",
-    "<all_urls>"
+    "http://*/*",
+    "https://*/*"
   ]
 }

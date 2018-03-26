@@ -5,8 +5,8 @@ class DiscussionPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentTab: "placeholder",
-      comments: {},
+      currentTab: null,
+      data: {},
     }
     this.extractHostname = this.extractHostname.bind(this);
     this.extractRootDomain = this.extractRootDomain.bind(this);
@@ -52,36 +52,27 @@ class DiscussionPage extends Component {
   componentWillMount() {
     const that = this; // ref to react object for the callback
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      that.setState({
-        currentTab: that.extractRootDomain(tabs[0].url)
-      })
+      const url = that.extractRootDomain(tabs[0].url);
+      fetch(`http://www.whistlehq.com/api/posts/${url}`)
+        .then(function(res){
+          if (res.status === 200) {
+            return res.json();
+          }
+        }).then(function(payload){
+          that.setState({
+            data: payload.data,
+            currentTab: url
+          })
+        })
     });
   }
-
-  componentDidMount() {
-    const DEMO_URL = "http://www.whistlehq.com/demo";
-    const that = this;
-
-    fetch(DEMO_URL)
-      .then(function (res) {
-        if (res.status === 200) {
-          return res.json();
-        }
-      })
-      .then(function (data) {
-        that.setState({
-          comments: data
-        })
-      })
-  }
-
 
   render() {
     return (
       <div>
         <h1>Testing the World</h1>
         <p>The current domain is: <b>{this.state.currentTab}</b></p>
-        <Messages comments={this.state.comments} />
+        <Messages data={this.state.data} />
       </div>
     );
   }
