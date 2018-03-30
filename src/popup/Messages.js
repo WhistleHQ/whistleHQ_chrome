@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Messages = ({ data }) => {
+    console.log(data);
     // no data found
     if (Object.keys(data).length === 0 || data.comments === false) {
         return (
             <div>No comments on for this domain</div>
         )
     } else {
-        // console.log(data.data);
         return (
             <div>
                 {data.comments.map(function (comment, index) {
