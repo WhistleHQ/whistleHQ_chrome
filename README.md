@@ -8,7 +8,7 @@ This project is setup for development on a chrome extension using React and Webp
 
 ## Installing
 1. Run `npm install` from the command line to install dependencies
-2. Run `npm run watch` from the command line to create a dev build. This build is unoptimized and meant for development.
+2. Run `npm run start` from the command line to create a dev build. This build is unoptimized and meant for development.
 3. Navigate to `chrome://extensions` and click `Load unpacked extensions`. Link the `dist` folder. (Make sure Developer mode to checked).
 
 ## Production
