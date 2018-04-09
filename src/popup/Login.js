@@ -69,9 +69,9 @@ class Login extends Component {
             </form>)
         return (
             <div>
-                <p>{this.state.ajaxInProgress ? "Please Wait, connecting to server": null}</p>
-                <p>{this.state.message}</p>
-                {this.props.session ? <p>You Are Logged in!</p>: loginForm}
+                {this.state.ajaxInProgress ? <p className="message">Please Wait, connecting to server</p>: null}
+                {this.state.message ? <p className="message error">{this.state.message}</p>: null}
+                {this.props.session ? <p className="message save">You Are Logged in!</p>: loginForm}
                 <button onClick={() => { this.props.navigate("discussion") }}>Back to discusssion</button>
             </div>
         );

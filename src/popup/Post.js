@@ -19,9 +19,9 @@ class Post extends Component {
     setMessage(res) {
         let message = null;
         if (res.hasOwnProperty("error")) {
-            message = <span className="error">{res.error}</span>;
+            message = <p className="meessage error">{res.error}</p>;
         } else if (res.hasOwnProperty("save")) {
-            message = <span className="save">{res.save}</span>;
+            message = <p className="message save">{res.save}</p>;
         }
         return message;
     }
@@ -55,7 +55,8 @@ class Post extends Component {
             })
         }).then(function(res){
             return res.json();
-        }).then(function(payload){
+        }).then(function(payload) {
+            that.props.updatePosts();
             that.setState({
                 ajaxInProgress: that.state.ajaxInProgress - 1,
                 comment: {

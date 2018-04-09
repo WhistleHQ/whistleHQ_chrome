@@ -10,14 +10,14 @@ class App extends Component {
     this.state = {
       page: "discussion",
       currentTab: null,
-      data: {},
+      data: null,
       sessionID: "",
       message: "",
     }
-    this.switchPage = this.switchPage.bind(this);
     this.navigate = this.navigate.bind(this);
     this.setSessionId = this.setSessionId.bind(this);
     this.clearSession = this.clearSession.bind(this);
+    this.updatePosts = this.updatePosts.bind(this);
   }
 
   // TODO: make the resolve param two key object loggedIn: true, sessionID: etc
@@ -32,7 +32,6 @@ class App extends Component {
         } else {
           resolve(JSON.parse(items["session_id"]));
         }
-
       });
     })
   }
@@ -62,6 +61,23 @@ class App extends Component {
     })
   }
 
+  updatePosts() {
+    const that = this;
+    fetch('http://localhost:3000/api/getComments', {
+      method: 'post',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({url: this.state.currentTab})
+    }).then(function(res){
+      if (res.status === 200) {
+        return res.json();
+      }
+    }).then(function(payload){
+        that.setState({
+          data: payload.info
+        });
+    })
+  }
+
   // used for changing views on the extension,
   // pass in the name of the conponent and add it to the switch statement
   // under the render function
@@ -74,64 +90,56 @@ class App extends Component {
     // this.initSessionVar();
     const promises = [that.getTabUrl(), that.getSessionId()];
     Promise.all(promises).then(function (data) {
-      that.setState({
-        currentTab: data[0],
-        sessionID: data[1],
-      })
-      // fetch(`http://www.whistlehq.com/api/posts/${data[0]}`)
-      //   .then(function(res){
-      //     if (res.status === 200) {
-      //       return res.json();
-      //     }
-      //   }).then(function(payload){
-      //     that.setState({
-      //       data: payload.data,
-      //       currentTab: data[0],
-      //       sessionID: data[1]
-      //     });
-      //   });
+      fetch("http://localhost:3000/api/getComments", {
+        method: 'post',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({url: data[0]})
+      }).then(function(res){
+          if (res.status === 200) {
+            return res.json();
+          }
+        }).then(function(payload){
+          that.setState({
+            data: payload.info,
+            currentTab: data[0],
+            sessionID: data[1]
+          });
+        });
     });
-  }
-
-  switchPage(e) {
-    console.log(e.currentTarget);
-    if (e.target.nodeName === "LI") {
-      const pageName = e.target.getAttribute("data-page");
-      this.setState({
-        page: pageName
-      });
-    }
   }
 
   render() {
     let page = null;
-    let login = "Not logged in";
     switch (this.state.page) {
       case "discussion":
-        page = <DiscussionPage currentTab={this.state.currentTab} />
+        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data}/>
         break;
       case "login":
         page = <Login navigate={this.navigate} setSessionId={this.setSessionId} session={this.state.sessionID}/>
         break;
       case "post":
-        page = <Post session={this.state.sessionID} navigate={this.navigate} url={this.state.currentTab}/>
+        page = <Post session={this.state.sessionID} navigate={this.navigate} url={this.state.currentTab} updatePosts={this.updatePosts}/>
         break;
       default:
-        page = <DiscussionPage currentTab={this.state.currentTab} />
-    }
-
-    if (this.state.sessionID) {
-    login = (<div><h3>{`Welcome, ${this.state.sessionID.name}`}</h3> <p>{`Your organization is on the domain: ${this.state.sessionID.domain}`}</p></div>);
+        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data}/>
     }
 
     return (
       <div>
-        <ul onClick={this.switchPage} className="nav">
-          <li data-page={"discussion"}>Discuss</li>
-          {this.state.sessionID ? <li onClick={this.clearSession}> Logout </li> : <li data-page={"login"}>Login</li>}
-          <li data-page={"post"}>Post</li>
+        <ul className="nav">
+          <li onClick={() => this.navigate("discussion")}>Discuss</li>
+          <li onClick={() => this.navigate("post")}>Post</li>
+          <li onClick={() => {
+            if (this.state.sessionID) {
+              this.clearSession();
+            } else {
+              this.navigate("login");
+            }
+          }}>{this.state.sessionID ? "Logout" : "Login"}</li>
         </ul>
-        <h3>{login}</h3>
+        {this.state.sessionID ?
+          <div><h3>{`Welcome, ${this.state.sessionID.name}`}</h3> <p>{`Your organization is associated with: ${this.state.sessionID.domain}`}</p></div>
+          : <p>You are not logged in</p>}
         {page}
       </div>
     );

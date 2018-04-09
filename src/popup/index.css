@@ -3,8 +3,7 @@ body {
   padding: 0;
   font-family: sans-serif;
   width: 400px;
-  height: 600px;
-  word-break: break-all;
+  padding-bottom: 200px;
 }
 
 .nav li:hover {
@@ -28,6 +27,18 @@ ul {
   background-color: rgb(48, 48, 48);
 }
 
+.message {
+  background-color: steelblue;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: white;
+  font-size: 18px;
+}
+
 .save {
-  color: green;
+  background-color: green;
+}
+
+.error {
+  background-color: red;
 }
