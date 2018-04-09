@@ -21,10 +21,9 @@ class DiscussionPage extends Component {
     if (data && data.length > 0) {
       comments = data.map(function(d, i){
         return (
-          <div key={i}>
-            <h3>{d.username}</h3>
-            <h4>{d.domain || "placeholder for old comments"}</h4>
-            <h5>{new Date(d.time).toString()}</h5>
+          <div key={i} className="comment">
+            <h3>{d.username} <span className="comment-date">{new Date(d.time).toString()}</span> </h3>
+            <h4>Org Domain: <span className="comment-domain">{d.domain || "placeholder for old comments"}</span></h4>
             <p>{d.comment}</p>
           </div>
         )
