@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DiscussionPage from './DiscussionPage';
 import Messages from './Messages';
 import Login from './Login';
+import Post from './Post';
 
 class App extends Component {
   constructor(props) {
@@ -11,6 +12,7 @@ class App extends Component {
       currentTab: null,
       data: {},
       sessionID: "",
+      message: "",
     }
     this.switchPage = this.switchPage.bind(this);
     this.navigate = this.navigate.bind(this);
@@ -23,12 +25,21 @@ class App extends Component {
   getSessionId() {
     return new Promise(function (resolve, reject) {
       chrome.storage.local.get("session_id", function (items) {
-        resolve(JSON.parse(items["session_id"]));
+        // the first time extension is ran, session_id won't be initialized
+        if (Object.keys(items).length === 0) {
+          chrome.storage.local.set({"session_id": null});
+          resolve(null);
+        } else {
+          resolve(JSON.parse(items["session_id"]));
+        }
+
       });
     })
   }
 
   setSessionId(payload) {
+    // stringify because storage cannot accept nested objects
+    // parse it when we retrieve it
     chrome.storage.local.set({ "session_id": JSON.stringify(payload) });
     this.setState({
       sessionID: payload
@@ -45,7 +56,8 @@ class App extends Component {
   getTabUrl() {
     return new Promise(function (resolve, reject) {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        resolve(tabs[0].url.replace(/^https?\:\/\//i, ""));
+        // resolve(tabs[0].url.replace(/^https?\:\/\//i, ""));
+        resolve(tabs[0].url);
       })
     })
   }
@@ -59,6 +71,7 @@ class App extends Component {
 
   componentWillMount() {
     const that = this; // ref to react object for the callback
+    // this.initSessionVar();
     const promises = [that.getTabUrl(), that.getSessionId()];
     Promise.all(promises).then(function (data) {
       that.setState({
@@ -81,6 +94,7 @@ class App extends Component {
   }
 
   switchPage(e) {
+    console.log(e.currentTarget);
     if (e.target.nodeName === "LI") {
       const pageName = e.target.getAttribute("data-page");
       this.setState({
@@ -92,7 +106,6 @@ class App extends Component {
   render() {
     let page = null;
     let login = "Not logged in";
-
     switch (this.state.page) {
       case "discussion":
         page = <DiscussionPage currentTab={this.state.currentTab} />
@@ -100,12 +113,15 @@ class App extends Component {
       case "login":
         page = <Login navigate={this.navigate} setSessionId={this.setSessionId} session={this.state.sessionID}/>
         break;
+      case "post":
+        page = <Post session={this.state.sessionID} navigate={this.navigate} url={this.state.currentTab}/>
+        break;
       default:
         page = <DiscussionPage currentTab={this.state.currentTab} />
     }
 
     if (this.state.sessionID) {
-      login = <div><h3>{`Welcome, ${this.state.sessionID.name}`}</h3> <p>{`Your domain is ${this.state.sessionID.domain}`}</p></div>;
+    login = (<div><h3>{`Welcome, ${this.state.sessionID.name}`}</h3> <p>{`Your organization is on the domain: ${this.state.sessionID.domain}`}</p></div>);
     }
 
     return (
@@ -113,6 +129,7 @@ class App extends Component {
         <ul onClick={this.switchPage} className="nav">
           <li data-page={"discussion"}>Discuss</li>
           {this.state.sessionID ? <li onClick={this.clearSession}> Logout </li> : <li data-page={"login"}>Login</li>}
+          <li data-page={"post"}>Post</li>
         </ul>
         <h3>{login}</h3>
         {page}

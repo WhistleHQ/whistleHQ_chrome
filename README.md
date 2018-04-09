@@ -3,14 +3,14 @@ This project is setup for development on a chrome extension using React and Webp
 
 ## Requirements
 - Node/npm >= 6
-- Enable Dev Mode for chrome extensions
+- Enable Dev Mode for chrome extensions so that you may run unpacked extensions
 
 
 ## Installing
 1. Run `npm install` from the command line to install dependencies
-2. Run `npm run start` from the command line to create a dev build. This build is unoptimized and meant for development.
+2. Run `npm run start` from the command line. This will create a dist directory containing an unoptimized build of the extension.
 3. Navigate to `chrome://extensions` and click `Load unpacked extensions`. Link the `dist` folder. (Make sure Developer mode to checked).
 
 ## Production
-
-Run `npm run build`. This will create an optimized build for deploying.
+1. First run `npm run build`. This will create an optimized build for deploying.
+2. Zip the resulting dist directory created. From the unix command line, you can run `zip -r whistlehq.zip dist` in the project root or use your favorite zip utility.

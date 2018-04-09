@@ -9,7 +9,8 @@ class Login extends Component {
                 username: '',
                 password: '',
             },
-            ajaxInProgress: 0
+            ajaxInProgress: 0,
+            message: ''
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInput = this.handleInput.bind(this);
@@ -41,9 +42,15 @@ class Login extends Component {
         }).then(function (res) {
             return res.json();
         }).then(function (payload) {
-            that.props.setSessionId(payload);
+            let error = '';
+            if (payload.hasOwnProperty("token")){
+                that.props.setSessionId(payload);
+            } else {
+                error = payload.error;
+            }
             that.setState({
-                ajaxInProgress: that.state.ajaxInProgress - 1
+                ajaxInProgress: that.state.ajaxInProgress - 1,
+                message: error,
             })
         })
     }
@@ -63,6 +70,7 @@ class Login extends Component {
         return (
             <div>
                 <p>{this.state.ajaxInProgress ? "Please Wait, connecting to server": null}</p>
+                <p>{this.state.message}</p>
                 {this.props.session ? <p>You Are Logged in!</p>: loginForm}
                 <button onClick={() => { this.props.navigate("discussion") }}>Back to discusssion</button>
             </div>
