@@ -1,20 +1,8 @@
 import React, { Component } from 'react';
 import Messages from './Messages';
+import PropTypes from 'prop-types';
 
 class DiscussionPage extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     comments: null
-  //   }
-  // }
-
-  // componentWillMount() {
-  //   if (data) {
-
-  //   }
-  // }
-
   render() {
     let comments = null;
     let data = this.props.data;
@@ -31,15 +19,21 @@ class DiscussionPage extends Component {
     } else {
       comments = (<div><p>There are no comments are this page :(</p></div>);
     }
-    console.log(comments);
     return (
       <div>
         <h1>Comments on this URL</h1>
         <p className="discuss-url">The current url is: <b>{this.props.currentTab}</b></p>
         {comments}
+        <button onClick={() => this.props.navigate("post")}>Go to post</button>
       </div>
     );
   }
+}
+
+DiscussionPage.propTypes = {
+  navigate: PropTypes.func.isRequired,
+  currentTab: PropTypes.string,
+  data: PropTypes.array,
 }
 
 export default DiscussionPage;

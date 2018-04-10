@@ -63,7 +63,7 @@ class App extends Component {
 
   updatePosts() {
     const that = this;
-    fetch('http://localhost:3000/api/getComments', {
+    fetch('https://with-auth.herokuapp.com/api/getComments', {
       method: 'post',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({url: this.state.currentTab})
@@ -90,7 +90,7 @@ class App extends Component {
     // this.initSessionVar();
     const promises = [that.getTabUrl(), that.getSessionId()];
     Promise.all(promises).then(function (data) {
-      fetch("http://localhost:3000/api/getComments", {
+      fetch("https://with-auth.herokuapp.com/api/getComments", {
         method: 'post',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({url: data[0]})
@@ -112,7 +112,7 @@ class App extends Component {
     let page = null;
     switch (this.state.page) {
       case "discussion":
-        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data}/>
+        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data} navigate={this.navigate}/>
         break;
       case "login":
         page = <Login navigate={this.navigate} setSessionId={this.setSessionId} session={this.state.sessionID}/>
@@ -121,7 +121,7 @@ class App extends Component {
         page = <Post session={this.state.sessionID} navigate={this.navigate} url={this.state.currentTab} updatePosts={this.updatePosts}/>
         break;
       default:
-        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data}/>
+        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data} navigate={this.navigate}/>
     }
 
     return (

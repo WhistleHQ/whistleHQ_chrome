@@ -43,7 +43,7 @@ class Post extends Component {
         this.setState({
             ajaxInProgress: this.state.ajaxInProgress + 1
         });
-        fetch("http://localhost:3000/api/putComments",{
+        fetch("https://with-auth.herokuapp.com/api/putComments",{
             method: "post",
             headers: {
                 "Content-Type": "application/json"

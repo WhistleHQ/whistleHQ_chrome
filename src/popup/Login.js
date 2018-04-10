@@ -30,7 +30,7 @@ class Login extends Component {
         this.setState({
             ajaxInProgress: this.state.ajaxInProgress + 1
         })
-        fetch('http://localhost:3000/api/login', {
+        fetch('https://with-auth.herokuapp.com/api/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
