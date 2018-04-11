@@ -13,4 +13,4 @@ This project is setup for development on a chrome extension using React and Webp
 
 ## Production
 1. First run `npm run build`. This will create an optimized build for deploying.
-2. Zip the resulting dist directory created. From the unix command line, you can run `zip -r whistlehq.zip dist` in the project root or use your favorite zip utility.
+2. Zip the resulting dist directory created. From the unix command line, you can run this oneliner ` cd dist; zip -r ../whistlehq.zip *; cd ..` in the project root. Othewise, you can use your favorite zip utility.
