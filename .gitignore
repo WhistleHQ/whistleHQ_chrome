@@ -2,3 +2,5 @@
 /dist
 .DS_Store
 npm-debug.log
+*.zip
+/whistlehq

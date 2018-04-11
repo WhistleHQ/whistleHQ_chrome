@@ -13,6 +13,7 @@ class App extends Component {
       data: null,
       sessionID: "",
       message: "",
+      ajaxInProgress: 0,
     }
     this.navigate = this.navigate.bind(this);
     this.setSessionId = this.setSessionId.bind(this);
@@ -27,7 +28,7 @@ class App extends Component {
       chrome.storage.local.get("session_id", function (items) {
         // the first time extension is ran, session_id won't be initialized
         if (Object.keys(items).length === 0) {
-          chrome.storage.local.set({"session_id": null});
+          chrome.storage.local.set({ "session_id": null });
           resolve(null);
         } else {
           resolve(JSON.parse(items["session_id"]));
@@ -66,15 +67,15 @@ class App extends Component {
     fetch('https://with-auth.herokuapp.com/api/getComments', {
       method: 'post',
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({url: this.state.currentTab})
-    }).then(function(res){
+      body: JSON.stringify({ url: this.state.currentTab })
+    }).then(function (res) {
       if (res.status === 200) {
         return res.json();
       }
-    }).then(function(payload){
-        that.setState({
-          data: payload.info
-        });
+    }).then(function (payload) {
+      that.setState({
+        data: payload.info
+      });
     })
   }
 
@@ -90,21 +91,27 @@ class App extends Component {
     // this.initSessionVar();
     const promises = [that.getTabUrl(), that.getSessionId()];
     Promise.all(promises).then(function (data) {
+      that.setState({
+        ajaxInProgress: that.state.ajaxInProgress + 1,
+        message: "getting posts from server..."
+      })
       fetch("https://with-auth.herokuapp.com/api/getComments", {
         method: 'post',
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({url: data[0]})
-      }).then(function(res){
-          if (res.status === 200) {
-            return res.json();
-          }
-        }).then(function(payload){
-          that.setState({
-            data: payload.info,
-            currentTab: data[0],
-            sessionID: data[1]
-          });
+        body: JSON.stringify({ url: data[0] })
+      }).then(function (res) {
+        if (res.status === 200) {
+          return res.json();
+        }
+      }).then(function (payload) {
+        that.setState({
+          data: payload.info,
+          currentTab: data[0],
+          sessionID: data[1],
+          ajaxInProgress: that.state.ajaxInProgress - 1,
+          message: null,
         });
+      });
     });
   }
 
@@ -112,23 +119,23 @@ class App extends Component {
     let page = null;
     switch (this.state.page) {
       case "discussion":
-        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data} navigate={this.navigate}/>
+        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data} navigate={this.navigate} />
         break;
       case "login":
-        page = <Login navigate={this.navigate} setSessionId={this.setSessionId} session={this.state.sessionID}/>
+        page = <Login navigate={this.navigate} setSessionId={this.setSessionId} session={this.state.sessionID} />
         break;
       case "post":
-        page = <Post session={this.state.sessionID} navigate={this.navigate} url={this.state.currentTab} updatePosts={this.updatePosts}/>
+        page = <Post session={this.state.sessionID} navigate={this.navigate} url={this.state.currentTab} updatePosts={this.updatePosts} />
         break;
       default:
-        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data} navigate={this.navigate}/>
+        page = <DiscussionPage currentTab={this.state.currentTab} data={this.state.data} navigate={this.navigate} />
     }
 
     return (
       <div>
         <ul className="nav">
           <li onClick={() => this.navigate("discussion")}>Discuss</li>
-          <li onClick={() => this.navigate("post")}>Post</li>
+          <li onClick={() => this.navigate("post")}>Write Post</li>
           <li onClick={() => {
             if (this.state.sessionID) {
               this.clearSession();
@@ -140,6 +147,7 @@ class App extends Component {
         {this.state.sessionID ?
           <div><h3>{`Welcome, ${this.state.sessionID.name}`}</h3> <p>{`Your organization is associated with: ${this.state.sessionID.domain}`}</p></div>
           : <p>You are not logged in</p>}
+        {this.state.ajaxInProgress? <p className="message">{this.state.message}</p>: null}
         {page}
       </div>
     );

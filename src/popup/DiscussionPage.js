@@ -24,7 +24,7 @@ class DiscussionPage extends Component {
         <h1>Comments on this URL</h1>
         <p className="discuss-url">The current url is: <b>{this.props.currentTab}</b></p>
         {comments}
-        <button onClick={() => this.props.navigate("post")}>Go to post</button>
+        <button onClick={() => this.props.navigate("post")}>New post</button>
       </div>
     );
   }
