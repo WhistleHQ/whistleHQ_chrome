@@ -1,5 +1,5 @@
 ## About
-This project is setup for development on a chrome extension using React and Webpack. Webpack is configured to listen for file changes and hot-load the extension to avoid the need to constantly reload the extensions from `chrome://extensions`
+This repo contains the source code for Whistle HQ's chrome extension frontend. Webpack is set up to hot reload for quality of life improvement. It does not contain the compiled extension, but you can build it yourself using the production instructions below
 
 ## Requirements
 - Node
