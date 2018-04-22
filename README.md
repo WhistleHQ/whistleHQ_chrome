@@ -1,6 +1,9 @@
 ## About
 This repo contains the source code for Whistle HQ's chrome extension frontend. Webpack is set up to hot reload for quality of life improvement. It does not contain the compiled extension, but you can build it yourself using the production instructions below
 
+## Video Demo
+[Click here](https://www.youtube.com/watch?v=jQ0n_hzbZqE&feature=youtu.be)
+
 ## Requirements
 - Node
 - npm or yarn
